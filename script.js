@@ -132,14 +132,7 @@ function detailedProduct(
   productInfo.appendChild(buttonBuy)
 
   buttonBuy.addEventListener('click', () => {
-    const modalWindow = document.createElement('div')
-    modalWindow.classList.add('modal')
-    modalWindow.innerHTML = `Ви купили товар: ${productName}`
-    colCenter.appendChild(modalWindow)
-    setTimeout(() => {
-      modalWindow.remove()
-      resetCategorySelection()
-    }, 3000)
+    createFormBuy()
     colRight.style.display = 'none'
   })
   colRight.appendChild(productContent)
@@ -162,4 +155,21 @@ function resetCategorySelection() {
   })
 
   addBorderClickListeners()
+}
+
+function createFormBuy() {
+  const modalWindow = document.createElement('div')
+  modalWindow.classList.add('modal')
+  colCenter.appendChild(modalWindow)
+
+  const modalDiv = document.createElement('div')
+  modalDiv.classList.add('modalDiv')
+  modalDiv.innerText = 'Для оформлення замовлення, заповніть наступні поля:'
+  modalWindow.appendChild(modalDiv)
+
+  const inputFio = document.createElement('input')
+  inputFio.classList.add('inputFio')
+  inputFio.placeholder = "Введіть Прізвище, Ім'я, та по Батькові "
+  modalWindow.appendChild(inputFio)
+  const inputFioValue = inputFio.value
 }
