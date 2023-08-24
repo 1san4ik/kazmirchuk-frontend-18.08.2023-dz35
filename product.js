@@ -215,4 +215,34 @@ const allCategory = [
   productPodushky,
 ]
 
-export { listCategory, allCategory }
+const listCityDelivery = [
+  '',
+  'Київ',
+  'Харків',
+  'Дніпро',
+  'Одеса',
+  'Запоріжжя',
+  'Львів',
+  'Кривий Ріг',
+  'Миколаїв',
+  'Маріуполь',
+  'Вінниця',
+  'Херсон',
+  'Полтава',
+  'Чернігів',
+  'Черкаси',
+  'Суми',
+  'Хмельницький',
+  'Житомир',
+  'Кропивницький',
+  'Рівне',
+  'Чернівці',
+  'Тернопіль',
+  'Івано Франківськ',
+  'Луцьк',
+  'Ужгород',
+]
+
+const selectPayment = ['Післяплата', 'Переказ на картку']
+
+export { listCategory, allCategory, listCityDelivery, selectPayment }
