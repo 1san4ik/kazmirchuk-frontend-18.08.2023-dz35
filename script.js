@@ -194,7 +194,6 @@ function createFormBuy() {
   inputTelephone.classList.add('inputTelephone')
   inputTelephone.type = 'tel'
   inputTelephone.placeholder = "Введіть телефон (обов'язково*)"
-  inputTelephone.pattern = '[0-9]{3}-[0-9]{3}-[0-9]{2}-[0-9]{2}'
   labelTelephone.appendChild(inputTelephone)
   // ==============================================================
   const labelinputCity = document.createElement('label')
@@ -261,5 +260,13 @@ function createFormBuy() {
   buttonListBuy.classList.add('buttonListBuy')
   buttonListBuy.type = 'button'
   buttonListBuy.innerText = 'Замовити'
+  buttonListBuy.addEventListener('click', orderButtonClick)
   modalWindow.appendChild(buttonListBuy)
+}
+
+function orderButtonClick() {
+  const backgroundModal = document.querySelector('.backgroundModal')
+  backgroundModal.remove()
+  const modalWindow = document.querySelector('.modal')
+  modalWindow.remove()
 }
