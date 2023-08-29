@@ -79,7 +79,7 @@ function shortProduct(link) {
 function addBorderClickListeners() {
   const borderProduct = document.querySelectorAll('.border')
   borderProduct.forEach((link) => {
-    link.addEventListener('click', (event) => {
+    link.addEventListener('click', () => {
       colRight.style.display = 'block'
       const imgSrc = link.getAttribute('data-imgsrc')
       const productName = link.getAttribute('data-name')
@@ -110,6 +110,7 @@ function detailedProduct(
   const imgProduct = document.createElement('img')
   imgGallery.appendChild(imgProduct)
   imgProduct.src = imgSrc
+  localStorage.setItem('imgSrc', imgSrc)
 
   const productInfo = document.createElement('div')
   productInfo.classList.add('productInfo')
@@ -119,6 +120,7 @@ function detailedProduct(
   nameProduct.classList.add('nameProduct')
   nameProduct.innerText = productName
   productInfo.appendChild(nameProduct)
+  localStorage.setItem('nameProduct', productName)
 
   const descriptionProduct = document.createElement('div')
   descriptionProduct.classList.add('descriptionProduct')
@@ -129,6 +131,7 @@ function detailedProduct(
   price.classList.add('product-price')
   productInfo.appendChild(price)
   price.innerHTML = `Ціна: ${productPrice} &#8372;`
+  localStorage.setItem('priceProduct', productPrice)
 
   const buttonBuy = document.createElement('button')
   buttonBuy.classList.add('buy-button')
@@ -141,24 +144,6 @@ function detailedProduct(
     colRight.style.display = 'none'
   })
   colRight.appendChild(productContent)
-  addBorderClickListeners()
-}
-
-function resetCategorySelection() {
-  navLinks.forEach((link) => {
-    link.classList.remove('active')
-  })
-
-  while (colCenter.firstChild) {
-    colCenter.removeChild(colCenter.firstChild)
-  }
-
-  allCategory.forEach((category) => {
-    category.forEach((link) => {
-      shortProduct(link)
-    })
-  })
-
   addBorderClickListeners()
 }
 
@@ -177,13 +162,18 @@ function createFormBuy() {
   modalWindow.appendChild(modalDiv)
   // ==============================================================
   const labelinputFio = document.createElement('label')
-  labelinputFio.innerText = '* Введіть ФІО: '
+  labelinputFio.innerText = '* Введіть ПІБ: '
   modalWindow.appendChild(labelinputFio)
 
   const inputFio = document.createElement('input')
   inputFio.classList.add('inputFio')
   inputFio.type = 'text'
-  inputFio.placeholder = "Прізвище, ім’я, по батькові (обов'язково*)"
+  inputFio.placeholder = 'Прізвище, ім’я, по батькові'
+  inputFio.minLength = '4'
+  inputFio.maxLength = '50'
+  if (localStorage.getItem('fio') !== null) {
+    inputFio.value = localStorage.getItem('fio')
+  }
   labelinputFio.appendChild(inputFio)
   // ==============================================================
   const labelTelephone = document.createElement('label')
@@ -193,11 +183,16 @@ function createFormBuy() {
   const inputTelephone = document.createElement('input')
   inputTelephone.classList.add('inputTelephone')
   inputTelephone.type = 'tel'
-  inputTelephone.placeholder = "Введіть телефон (обов'язково*)"
+  inputTelephone.minLength = '10'
+  inputTelephone.maxLength = '18'
+  inputTelephone.placeholder = 'Введіть телефон'
+  if (localStorage.getItem('tel') !== null) {
+    inputTelephone.value = localStorage.getItem('tel')
+  }
   labelTelephone.appendChild(inputTelephone)
   // ==============================================================
   const labelinputCity = document.createElement('label')
-  labelinputCity.innerText = 'Виберіть місто: '
+  labelinputCity.innerText = '* Виберіть місто: '
   const selectCity = document.createElement('select')
   selectCity.classList.add('selectCityId')
 
@@ -207,18 +202,25 @@ function createFormBuy() {
     option.value = elem
     selectCity.appendChild(option)
   })
+  if (localStorage.getItem('city') !== null) {
+    selectCity.value = localStorage.getItem('city')
+  }
 
   labelinputCity.appendChild(selectCity)
   modalWindow.appendChild(labelinputCity)
   // ==============================================================
   const labelSklad = document.createElement('label')
-  labelSklad.innerText = 'Склад Нової пошти для надсилання: '
+  labelSklad.innerText = '* Склад Нової пошти для надсилання: '
   modalWindow.appendChild(labelSklad)
 
   const inputSklad = document.createElement('input')
   inputSklad.classList.add('inputSklad')
   inputSklad.type = 'number'
   inputSklad.placeholder = 'Введіть номер складу'
+  inputSklad.min = 1
+  if (localStorage.getItem('sklad') !== null) {
+    inputSklad.value = localStorage.getItem('sklad')
+  }
   labelSklad.appendChild(inputSklad)
   // ==============================================================
   const labelOplata = document.createElement('label')
@@ -232,6 +234,10 @@ function createFormBuy() {
     optionPay.value = elemPay
     selectOplata.appendChild(optionPay)
   })
+  if (localStorage.getItem('oplata') !== null) {
+    selectOplata.value = localStorage.getItem('oplata')
+  }
+
   labelOplata.appendChild(selectOplata)
   modalWindow.appendChild(labelOplata)
   // ==============================================================
@@ -244,6 +250,11 @@ function createFormBuy() {
   inputQuantity.type = 'number'
   inputQuantity.placeholder = '1'
   inputQuantity.value = 1
+  inputQuantity.min = 1
+  inputQuantity.step = 1
+  if (localStorage.getItem('quantity') !== null) {
+    inputQuantity.value = localStorage.getItem('quantity')
+  }
   labelQuantity.appendChild(inputQuantity)
   // ==============================================================
   const labelComent = document.createElement('label')
@@ -254,6 +265,11 @@ function createFormBuy() {
   inputComent.classList.add('inputComent')
   inputComent.type = 'text'
   inputComent.placeholder = 'Ваш коментар...'
+  inputComent.minLength = '4'
+  inputComent.maxLength = '50'
+  if (localStorage.getItem('comment') !== null) {
+    inputComent.value = localStorage.getItem('comment')
+  }
   labelComent.appendChild(inputComent)
   // ==============================================================
   const buttonListBuy = document.createElement('button')
@@ -265,8 +281,108 @@ function createFormBuy() {
 }
 
 function orderButtonClick() {
-  const backgroundModal = document.querySelector('.backgroundModal')
-  backgroundModal.remove()
-  const modalWindow = document.querySelector('.modal')
-  modalWindow.remove()
+  const modal = document.querySelector('.modal')
+  modal.addEventListener('input', function (event) {})
+
+  const inputFio = document.querySelector('.inputFio')
+  localStorage.setItem('fio', inputFio.value.trim())
+
+  const inputTelephone = document.querySelector('.inputTelephone')
+  localStorage.setItem('tel', inputTelephone.value.trim())
+
+  const fioPattern = /^[A-Za-zа-яА-ЯёЁіІїЇєЄ\s']+$/
+  const telephonePattern = /^[\d\s-()+]+$/
+
+  const selectCity = document.querySelector('.selectCityId')
+  localStorage.setItem('city', selectCity.value)
+
+  const inputSklad = document.querySelector('.inputSklad')
+  localStorage.setItem('sklad', inputSklad.value)
+
+  const selectOplata = document.querySelector('.selectOplata')
+  localStorage.setItem('oplata', selectOplata.value)
+
+  const inputQuantity = document.querySelector('.inputQuantity')
+  localStorage.setItem('quantity', inputQuantity.value)
+
+  const inputComent = document.querySelector('.inputComent')
+  localStorage.setItem('comment', inputComent.value)
+
+  if (inputFio.value === '') {
+    alert('Введіть ПІБ.')
+    return
+  } else if (inputFio.value.length < inputFio.minLength) {
+    alert('Поле ПІБ має бути більшої довжини')
+    inputFio.value = ''
+    return
+  } else if (!fioPattern.test(inputFio.value)) {
+    alert('Поле ПІБ може містити тільки літери та пробіли.')
+    inputFio.value = ''
+    return
+  }
+
+  if (inputTelephone.value === '') {
+    alert('Введіть телефон.')
+    return
+  } else if (!telephonePattern.test(inputTelephone.value)) {
+    alert('Неправильний формат телефону.')
+    return
+  } else if (inputTelephone.value.length < inputTelephone.minLength) {
+    alert('Номер телефону має замало цифр.')
+    inputTelephone.value = ''
+    return
+  }
+  if (selectCity.value == '') {
+    alert('Виберіть місто з випадаючого списку')
+    return
+  }
+  if (inputSklad.value === '') {
+    alert('Введіть номер склада, для доставки')
+    return
+  }
+  modal.remove()
+  payList()
+}
+
+function payList() {
+  const buyerName = localStorage.getItem('fio')
+  const buyerTelephone = localStorage.getItem('tel')
+  const buyerCity = localStorage.getItem('city')
+  const buyerSklad = localStorage.getItem('sklad')
+  const buyerProductName = localStorage.getItem('nameProduct')
+  const buyerImgProduct = localStorage.getItem('imgSrc')
+  const productQuantity = localStorage.getItem('quantity')
+  const productOplata = localStorage.getItem('oplata')
+
+  const payListContent = document.createElement('div')
+  payListContent.classList.add('payListContent')
+  colCenter.appendChild(payListContent)
+
+  const payListTitle = document.createElement('div')
+  payListTitle.classList.add('payListTitle')
+  payListTitle.innerHTML = `Ви замовили: <h2>${buyerProductName}</h2><br>
+<div><img src="${buyerImgProduct}"></div><br>
+<div>Вартість: ${productQuantity}шт. * ${localStorage.getItem(
+    'priceProduct'
+  )}&#8372;  =  <b>${
+    productQuantity * localStorage.getItem('priceProduct')
+  }</b>&#8372;</div>`
+  payListContent.appendChild(payListTitle)
+
+  const orderInfo = document.createElement('p')
+  orderInfo.innerHTML = `Покупець: <b>${buyerName}</b><br>Телефон: <b>${buyerTelephone}</b><br>Місто: <b>${buyerCity}</b><br>Склад №: <b>${buyerSklad}</b><br>Оплата: <b>${productOplata}</b>`
+  payListContent.appendChild(orderInfo)
+
+  const buttonClose = document.createElement('button')
+  buttonClose.classList.add('buttonListBuy')
+  buttonClose.innerText = 'Закрити'
+  payListContent.appendChild(buttonClose)
+  buttonClose.addEventListener('click', function () {
+    payListContent.remove()
+    const backgroundModal = document.querySelector('.backgroundModal')
+    backgroundModal.remove()
+    localStorage.removeItem('oplata')
+    localStorage.removeItem('quantity')
+    localStorage.removeItem('comment')
+  })
 }
